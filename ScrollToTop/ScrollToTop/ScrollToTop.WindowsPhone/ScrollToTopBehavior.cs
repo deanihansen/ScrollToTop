@@ -49,6 +49,13 @@ namespace ScrollToTop
             }
         }
 
+        public void Detach()
+        {
+            scrollToTopButton.Tapped -= ScrollToTopButton_Tapped;
+            verticalScrollBar.ValueChanged -= VerticalScrollBar_ValueChanged;
+            scrollviewer.Loaded -= Scrollviewer_Loaded;
+        }
+
         private void Scrollviewer_Loaded(object sender, RoutedEventArgs e)
         {
             FindParts(scrollviewer);
@@ -102,10 +109,10 @@ namespace ScrollToTop
         {
             var offset = e.NewValue as double?;
 
-            if (offset != null)
+            if (offset.HasValue)
             {
-                Debug.WriteLine((double)offset);
-                offsets.Add((double)offset);
+                Debug.WriteLine(offset.Value);
+                offsets.Add(offset.Value);
                 count = count + 1;
 
                 DetermineVisualstateChange();
@@ -145,13 +152,6 @@ namespace ScrollToTop
                 isHidden = false;
                 VisualStateManager.GoToState(scrollviewer, "GoToTopVisible", true);
             }
-        }
-
-        public void Detach()
-        {
-            scrollToTopButton.Tapped -= ScrollToTopButton_Tapped;
-            verticalScrollBar.ValueChanged -= VerticalScrollBar_ValueChanged;
-            scrollviewer.Loaded -= Scrollviewer_Loaded;
         }
     }
 }
