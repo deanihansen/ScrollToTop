@@ -56,7 +56,7 @@ namespace ScrollToTop
 
         private void FindParts(DependencyObject dp)
         {
-            while (verticalScrollBar == null && scrollToTopButton == null)
+            if (verticalScrollBar == null && scrollToTopButton == null)
             {
                 for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dp); i++)
                 {
@@ -86,17 +86,20 @@ namespace ScrollToTop
                     }
                 }
             }
+            else
+            {
+                return;
+            }
         }
 
         private void ScrollToTopButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             scrollviewer.ChangeView(null, 0, null);
-            HideGoTopTopButton();
+            //HideGoTopTopButton();
         }
 
         private void VerticalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-
             var offset = e.NewValue as double?;
 
             if (offset != null)
@@ -113,7 +116,7 @@ namespace ScrollToTop
         {
             if (count > 4)
             {
-                if (offsets[count - 3] > 250.0 && offsets[count - 2] < offsets[count - 3] && offsets[count - 1] < offsets[count - 2])
+                if (offsets[count - 1] > 250.0 && offsets[count - 2] < offsets[count - 3] && offsets[count - 1] < offsets[count - 2])
                 {
                     Debug.WriteLine("############## SHOW BUTTON ############## ");
                     ShowGoToTopButton();
