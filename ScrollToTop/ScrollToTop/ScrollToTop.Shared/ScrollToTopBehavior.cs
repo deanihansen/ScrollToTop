@@ -25,6 +25,7 @@ namespace ScrollToTop
         private bool isHidden;
         private bool buttonAdded;
         private Grid grid;
+        private Grid container;
 
         public Button ScrollToTopButton
         {
@@ -61,7 +62,6 @@ namespace ScrollToTop
                 if (ScrollToTopButton != null)
                 {
                     ScrollToTopButton.Tapped += ScrollToTopButton_Tapped;
-                    ScrollToTopButton.Visibility = Visibility.Collapsed;
                     ScrollToTopButton.Name = "ScrollToTopButton";
                 }
             }
@@ -97,8 +97,12 @@ namespace ScrollToTop
 
                     if (buttonAdded == false && control is Grid)
                     {
+                        container = new Grid();
+                        container.Children.Add(ScrollToTopButton);
+                        container.Visibility = Visibility.Collapsed;
+
                         grid = control as Grid;
-                        grid.Children.Add(ScrollToTopButton);
+                        grid.Children.Add(container);
                         buttonAdded = true;
                         break;
                     }
@@ -159,10 +163,10 @@ namespace ScrollToTop
 
                 var storyboard = new Storyboard();
                 var animation = new FadeOutThemeAnimation();
-                animation.SetValue(Storyboard.TargetNameProperty, "Border");
+                animation.SetValue(Storyboard.TargetNameProperty, "ScrollToTopButton");
                 Storyboard.SetTarget(animation, ScrollToTopButton);
                 storyboard.Children.Add(animation);
-                storyboard.Completed += (e,a) => { ScrollToTopButton.Visibility = Visibility.Collapsed; };
+                storyboard.Completed += (e,a) => { container.Visibility = Visibility.Collapsed; };
                 storyboard.Begin();
             }
         }
@@ -171,11 +175,11 @@ namespace ScrollToTop
         {
             if (isHidden)
             {
-                ScrollToTopButton.Visibility = Visibility.Visible;
+                container.Visibility = Visibility.Visible;
                 isHidden = false;
                 var storyboard = new Storyboard();
                 var animation = new FadeInThemeAnimation();
-                animation.SetValue(Storyboard.TargetNameProperty, "Border");
+                animation.SetValue(Storyboard.TargetNameProperty, "ScrollToTopButton");
                 Storyboard.SetTarget(animation, ScrollToTopButton);
                 storyboard.Children.Add(animation);
                 storyboard.Begin();
