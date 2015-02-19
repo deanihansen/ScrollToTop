@@ -17,18 +17,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)1.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)10.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)2.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)3.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)4.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)5.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)6.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)7.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)8.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)9.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)ToTop.scale-100.png" />
-    <Content Include="$(MSBuildThisFileDirectory)ToTop.scale-140.png" />
-    <Content Include="$(MSBuildThisFileDirectory)ToTop.scale-240.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\1.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\10.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\2.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\3.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\4.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\5.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\6.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\7.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\8.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\9.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\ToTop.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\ToTop.scale-140.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Images\ToTop.scale-240.png" />
   </ItemGroup>
 </Project>

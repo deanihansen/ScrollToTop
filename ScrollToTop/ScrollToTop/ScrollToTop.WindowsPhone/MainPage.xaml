@@ -345,7 +345,7 @@
                                         x:Name="image"
                                         Width="100"
                                         Height="100"
-                                        Source="ToTop.png"
+                                        Source="ms-appx:///Images/ToTop.png"
                                         Stretch="None"
                                         HorizontalAlignment="Right" />
                                 </Button>
@@ -374,7 +374,7 @@
                 Text="Blendrocks photos"
                 VerticalAlignment="Center"
                 FontSize="24"
-                FontWeight="SemiLight"
+                FontWeight="Light"
                 CharacterSpacing="150" />
         </Grid>
         <ScrollViewer
@@ -412,7 +412,7 @@
                     VerticalAlignment="Top">
                     <Image
                         Margin="30"
-                        Source="1.jpg" />
+                        Source="ms-appx:///Images/1.jpg" />
                 </Grid>
                 <Grid
                     Grid.Row="1"
@@ -421,7 +421,7 @@
                     VerticalAlignment="Top">
                     <Image
                         Margin="30"
-                        Source="2.jpg" />
+                        Source="ms-appx:///Images/2.jpg" />
                 </Grid>
                 <Grid
                     Grid.Row="2"
@@ -430,7 +430,7 @@
                     VerticalAlignment="Top">
                     <Image
                         Margin="30"
-                        Source="3.jpg" />
+                        Source="ms-appx:///Images/3.jpg" />
                 </Grid>
                 <Grid
                     Grid.Row="3"
@@ -439,7 +439,7 @@
                     VerticalAlignment="Top">
                     <Image
                         Margin="30"
-                        Source="4.jpg" />
+                        Source="ms-appx:///Images/4.jpg" />
                 </Grid>
                 <Grid
                     Grid.Row="4"
@@ -448,7 +448,7 @@
                     VerticalAlignment="Top">
                     <Image
                         Margin="30"
-                        Source="5.jpg" />
+                        Source="ms-appx:///Images/5.jpg" />
                 </Grid>
                 <Grid
                     Grid.Row="5"
@@ -457,7 +457,7 @@
                     VerticalAlignment="Top">
                     <Image
                         Margin="30"
-                        Source="6.jpg" />
+                        Source="ms-appx:///Images/6.jpg" />
                 </Grid>
                 <Grid
                     Grid.Row="6"
@@ -466,7 +466,7 @@
                     VerticalAlignment="Top">
                     <Image
                         Margin="30"
-                        Source="7.jpg" />
+                        Source="ms-appx:///Images/7.jpg" />
                 </Grid>
                 <Grid
                     Grid.Row="7"
@@ -475,7 +475,7 @@
                     VerticalAlignment="Top">
                     <Image
                         Margin="30"
-                        Source="8.jpg" />
+                        Source="ms-appx:///Images/8.jpg" />
                 </Grid>
                 <Grid
                     Grid.Row="8"
@@ -484,7 +484,7 @@
                     VerticalAlignment="Top">
                     <Image
                         Margin="30"
-                        Source="9.jpg" />
+                        Source="ms-appx:///Images/9.jpg" />
                 </Grid>
                 <Grid
                     Grid.Row="9"
@@ -493,7 +493,7 @@
                     VerticalAlignment="Top">
                     <Image
                         Margin="30"
-                        Source="10.jpg" />
+                        Source="ms-appx:///Images/10.jpg" />
                 </Grid>
             </Grid>
         </ScrollViewer>

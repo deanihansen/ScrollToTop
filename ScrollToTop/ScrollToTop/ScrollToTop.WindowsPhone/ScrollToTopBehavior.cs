@@ -15,6 +15,15 @@ namespace ScrollToTop
 {
     public class ScrollToTopBehavior : DependencyObject, IBehavior
     {
+        public Button ScrollToTopButton
+        {
+            get { return (Button)GetValue(ScrollToTopButtonProperty); }
+            set { SetValue(ScrollToTopButtonProperty, value); }
+        }
+
+        public static readonly DependencyProperty ScrollToTopButtonProperty =
+            DependencyProperty.Register("ScrollToTopButton", typeof(Button), typeof(ScrollToTopBehavior), new PropertyMetadata(null));
+
         private DependencyObject _associatedObject;
         private ScrollViewer scrollviewer;
         private ScrollBar verticalScrollBar;
@@ -45,15 +54,33 @@ namespace ScrollToTop
                 if (scrollviewer != null)
                 {
                     scrollviewer.Loaded += Scrollviewer_Loaded;
+                    scrollviewer.Unloaded += Scrollviewer_Unloaded;
                 }
+            }
+        }
+
+        private void Scrollviewer_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (scrollToTopButton != null)
+            {
+                scrollToTopButton.Tapped -= ScrollToTopButton_Tapped;
+                scrollToTopButton = null;
+            }
+
+            if (verticalScrollBar != null)
+            {
+                verticalScrollBar.ValueChanged -= VerticalScrollBar_ValueChanged;
+                verticalScrollBar = null;
             }
         }
 
         public void Detach()
         {
-            scrollToTopButton.Tapped -= ScrollToTopButton_Tapped;
-            verticalScrollBar.ValueChanged -= VerticalScrollBar_ValueChanged;
-            scrollviewer.Loaded -= Scrollviewer_Loaded;
+            if (scrollviewer != null)
+            {
+                scrollviewer.Loaded -= Scrollviewer_Loaded;
+                scrollviewer.Unloaded -= Scrollviewer_Unloaded;
+            }
         }
 
         private void Scrollviewer_Loaded(object sender, RoutedEventArgs e)
@@ -102,7 +129,6 @@ namespace ScrollToTop
         private void ScrollToTopButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             scrollviewer.ChangeView(null, 0, null);
-            //HideGoTopTopButton();
         }
 
         private void VerticalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -123,12 +149,14 @@ namespace ScrollToTop
         {
             if (count > 4)
             {
-                if (offsets[count - 1] > 250.0 && offsets[count - 2] < offsets[count - 3] && offsets[count - 1] < offsets[count - 2])
+                if (offsets[count - 1] > 250.0 && offsets[count - 2] < offsets[count - 3]
+                    && offsets[count - 1] < offsets[count - 2])
                 {
                     Debug.WriteLine("############## SHOW BUTTON ############## ");
                     ShowGoToTopButton();
                 }
-                else if ((offsets[count - 1] > 250.0 && offsets[count - 3] < offsets[count - 2] && offsets[count - 2] < offsets[count - 1]) || offsets[count - 1] < 250.0)
+                else if ((offsets[count - 1] > 250.0 && offsets[count - 3] < offsets[count - 2]
+                    && offsets[count - 2] < offsets[count - 1]) || offsets[count - 1] < 250.0)
                 {
                     Debug.WriteLine("############## HIDE BUTTON ############## ");
                     HideGoTopTopButton();
