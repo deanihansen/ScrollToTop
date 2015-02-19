@@ -10,27 +10,27 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace ScrollToTop
 {
     public class ScrollToTopBehavior : DependencyObject, IBehavior
     {
+        public static readonly DependencyProperty ScrollToTopButtonProperty = DependencyProperty.Register("ScrollToTopButton", typeof(Button), typeof(ScrollToTopBehavior), new PropertyMetadata(null));
+
+        private DependencyObject _associatedObject;
+        private ScrollViewer scrollviewer;
+        private List<double> offsets;
+        private int count;
+        private bool isHidden;
+        private bool buttonAdded;
+        private Grid grid;
+
         public Button ScrollToTopButton
         {
             get { return (Button)GetValue(ScrollToTopButtonProperty); }
             set { SetValue(ScrollToTopButtonProperty, value); }
         }
-
-        public static readonly DependencyProperty ScrollToTopButtonProperty =
-            DependencyProperty.Register("ScrollToTopButton", typeof(Button), typeof(ScrollToTopBehavior), new PropertyMetadata(null));
-
-        private DependencyObject _associatedObject;
-        private ScrollViewer scrollviewer;
-        private ScrollBar verticalScrollBar;
-        private List<double> offsets;
-        private int count;
-        private bool isHidden;
-        private Button scrollToTopButton;
 
         DependencyObject IBehavior.AssociatedObject
         {
@@ -44,6 +44,7 @@ namespace ScrollToTop
         {
             offsets = new List<double>();
             isHidden = true;
+            buttonAdded = false;
 
             if (!DesignMode.DesignModeEnabled)
             {
@@ -53,24 +54,16 @@ namespace ScrollToTop
 
                 if (scrollviewer != null)
                 {
+                    scrollviewer.ViewChanging += Scrollviewer_ViewChanging;
                     scrollviewer.Loaded += Scrollviewer_Loaded;
-                    scrollviewer.Unloaded += Scrollviewer_Unloaded;
                 }
-            }
-        }
 
-        private void Scrollviewer_Unloaded(object sender, RoutedEventArgs e)
-        {
-            if (scrollToTopButton != null)
-            {
-                scrollToTopButton.Tapped -= ScrollToTopButton_Tapped;
-                scrollToTopButton = null;
-            }
-
-            if (verticalScrollBar != null)
-            {
-                verticalScrollBar.ValueChanged -= VerticalScrollBar_ValueChanged;
-                verticalScrollBar = null;
+                if (ScrollToTopButton != null)
+                {
+                    ScrollToTopButton.Tapped += ScrollToTopButton_Tapped;
+                    ScrollToTopButton.Visibility = Visibility.Collapsed;
+                    ScrollToTopButton.Name = "ScrollToTopButton";
+                }
             }
         }
 
@@ -78,8 +71,14 @@ namespace ScrollToTop
         {
             if (scrollviewer != null)
             {
+                scrollviewer.ViewChanging -= Scrollviewer_ViewChanging;
                 scrollviewer.Loaded -= Scrollviewer_Loaded;
-                scrollviewer.Unloaded -= Scrollviewer_Unloaded;
+            }
+
+            if (ScrollToTopButton != null)
+            {
+                ScrollToTopButton.Tapped -= ScrollToTopButton_Tapped;
+                ScrollToTopButton = null;
             }
         }
 
@@ -90,29 +89,18 @@ namespace ScrollToTop
 
         private void FindParts(DependencyObject dp)
         {
-            if (verticalScrollBar == null && scrollToTopButton == null)
+            if (buttonAdded == false)
             {
                 for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dp); i++)
                 {
                     var control = VisualTreeHelper.GetChild(dp, i);
 
-                    var frameworkElement = control as FrameworkElement;
-                    if (frameworkElement != null)
+                    if (buttonAdded == false && control is Grid)
                     {
-                        if (frameworkElement.Name == "VerticalScrollBar")
-                        {
-                            verticalScrollBar = frameworkElement as ScrollBar;
-                            verticalScrollBar.ValueChanged += VerticalScrollBar_ValueChanged;
-                        }
-                        else if (frameworkElement.Name == "GoToTopButton")
-                        {
-                            scrollToTopButton = frameworkElement as Button;
-                            scrollToTopButton.Tapped += ScrollToTopButton_Tapped;
-                        }
-                        else
-                        {
-                            FindParts(control);
-                        }
+                        grid = control as Grid;
+                        grid.Children.Add(ScrollToTopButton);
+                        buttonAdded = true;
+                        break;
                     }
                     else
                     {
@@ -129,16 +117,17 @@ namespace ScrollToTop
         private void ScrollToTopButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             scrollviewer.ChangeView(null, 0, null);
+            HideGoTopTopButton();
         }
 
-        private void VerticalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        private void Scrollviewer_ViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
         {
-            var offset = e.NewValue as double?;
+            var offset = scrollviewer.VerticalOffset;
 
-            if (offset.HasValue)
+            if (e.IsInertial)
             {
-                Debug.WriteLine(offset.Value);
-                offsets.Add(offset.Value);
+                Debug.WriteLine(offset);
+                offsets.Add(offset);
                 count = count + 1;
 
                 DetermineVisualstateChange();
@@ -152,24 +141,29 @@ namespace ScrollToTop
                 if (offsets[count - 1] > 250.0 && offsets[count - 2] < offsets[count - 3]
                     && offsets[count - 1] < offsets[count - 2])
                 {
-                    Debug.WriteLine("############## SHOW BUTTON ############## ");
                     ShowGoToTopButton();
                 }
                 else if ((offsets[count - 1] > 250.0 && offsets[count - 3] < offsets[count - 2]
                     && offsets[count - 2] < offsets[count - 1]) || offsets[count - 1] < 250.0)
                 {
-                    Debug.WriteLine("############## HIDE BUTTON ############## ");
                     HideGoTopTopButton();
                 }
             }
         }
-
+        
         private void HideGoTopTopButton()
         {
             if (!isHidden)
             {
                 isHidden = true;
-                VisualStateManager.GoToState(scrollviewer, "GoToTopHidden", true);
+
+                var storyboard = new Storyboard();
+                var animation = new FadeOutThemeAnimation();
+                animation.SetValue(Storyboard.TargetNameProperty, "Border");
+                Storyboard.SetTarget(animation, ScrollToTopButton);
+                storyboard.Children.Add(animation);
+                storyboard.Completed += (e,a) => { ScrollToTopButton.Visibility = Visibility.Collapsed; };
+                storyboard.Begin();
             }
         }
 
@@ -177,8 +171,14 @@ namespace ScrollToTop
         {
             if (isHidden)
             {
+                ScrollToTopButton.Visibility = Visibility.Visible;
                 isHidden = false;
-                VisualStateManager.GoToState(scrollviewer, "GoToTopVisible", true);
+                var storyboard = new Storyboard();
+                var animation = new FadeInThemeAnimation();
+                animation.SetValue(Storyboard.TargetNameProperty, "Border");
+                Storyboard.SetTarget(animation, ScrollToTopButton);
+                storyboard.Children.Add(animation);
+                storyboard.Begin();
             }
         }
     }
